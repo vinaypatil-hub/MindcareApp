@@ -36,7 +36,7 @@ def get_reply(user_input):
     elif "stressed" in user_input or "stress" in user_input:
         return "Try to relax for a while. Small steps help you feel better 🌟"
     elif "lonely" in user_input:
-        return "You are never alone, Vinay. I’m always here for you 🤝"
+        return "You are never alone, I’m always here for you 🤝"
     elif "sleepy" in user_input or "can't sleep" in user_input:
         return "Try to rest your mind and body. Sleep is important 💤"
     elif "frustrated" in user_input:
