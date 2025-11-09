@@ -6,23 +6,26 @@ st.set_page_config(page_title="MindCare", page_icon="🧠", layout="centered")
 st.title("🧠 MindCare - Emotional Support App")
 
 try:
-    st.write("Welcome to MindCare! Tell us how you feel today 💬")
+    st.write("Welcome to MindCare! Tell us your name and how you feel today 💬")
 
+    user_name = st.text_input("Enter your name:")
     user_input = st.text_area("How are you feeling?")
 
     if st.button("Analyze Emotion"):
-        if user_input.strip():
+        if not user_name.strip():
+            st.warning("Please enter your name first 😊")
+        elif not user_input.strip():
+            st.warning("Please type something to analyze your mood.")
+        else:
             blob = TextBlob(user_input)
             polarity = blob.sentiment.polarity
 
             if polarity > 0:
-                st.success("You seem to be feeling positive! Keep it up 🌞")
+                st.success(f"{user_name}, you seem to be feeling positive! Keep it up 🌞")
             elif polarity < 0:
-                st.error("You seem to be feeling low 😔 Remember, tough times don’t last!")
+                st.error(f"{user_name}, you seem to be feeling low 😔 Remember, tough times don’t last!")
             else:
-                st.info("You seem neutral today. Take some time to relax 🧘‍♂")
-        else:
-            st.warning("Please type something to analyze your mood.")
+                st.info(f"{user_name}, you seem neutral today. Take some time to relax 🧘‍♂")
 
 except Exception as e:
     st.error("⚠ Oops! Something went wrong. Please try again later.")
