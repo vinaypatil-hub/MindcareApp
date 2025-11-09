@@ -1,49 +1,57 @@
 import streamlit as st
-from PIL import Image
-import os
+from textblob import TextBlob
+import random
 
-# Set page title, icon, and layout
-st.set_page_config(page_title="MindCare by Vinay Patil", page_icon="🧠", layout="centered")
+st.set_page_config(page_title="MindCare by Vinay Patil 💚", page_icon="💚", layout="centered")
 
-# Display logo if it exists
-logo_path = "logo.jpg"  # Change this if your file name is different
-if os.path.exists(logo_path):
-    logo = Image.open(logo_path)
-    st.image(logo, width=150)
-else:
-    st.write("🧠 MindCare")  # Fallback if logo not found
+st.markdown("<h1 style='text-align:center; color:green;'>🧠 MindCare by Vinay Patil 💚</h1>", unsafe_allow_html=True)
+st.write("Welcome! Type how you feel below and let me respond to your mood 🌱")
 
-# App title
-st.title("MindCare by Vinay Patil")
+user_input = st.text_area("How are you feeling today?")
 
-# Input box for user mood
-user_input = st.text_input("How are you feeling today?")
-
-# Function to generate smart reply
-def get_reply(user_input):
-    user_input = user_input.lower()
-    
-    if "sad" in user_input:
-        return "It’s okay to feel sad, Everything will be fine 💙"
-    elif "happy" in user_input:
-        return "That’s awesome! Keep smiling 😄"
-    elif "angry" in user_input:
-        return "Take a deep breath, calm down… You’ve got this 💪"
-    elif "tired" in user_input:
-        return "Please take some rest. Your health matters 🌿"
-    elif "anxious" in user_input or "anxiety" in user_input:
-        return "I know it feels hard, take a deep breath. You are strong 💚"
-    elif "stressed" in user_input or "stress" in user_input:
-        return "Try to relax for a while. Small steps help you feel better 🌟"
-    elif "lonely" in user_input:
-        return "You are never alone, I’m always here for you 🤝"
-    elif "sleepy" in user_input or "can't sleep" in user_input:
-        return "Try to rest your mind and body. Sleep is important 💤"
-    elif "frustrated" in user_input:
-        return "It’s okay to feel frustrated. Take a short break and calm down 🌿"
+if st.button("Analyze Mood"):
+    if user_input.strip() == "":
+        st.warning("Please write something first 💬")
     else:
-        return "I’m here for you always 🤝"
+        blob = TextBlob(user_input)
+        polarity = blob.sentiment.polarity
 
-# Display smart reply if user types something
-if user_input:
-    st.success(get_reply(user_input))
+        # Determine mood based on polarity
+        if polarity > 0.5:
+            mood = "Very Happy"
+            responses = [
+                "Wow! You're shining today 😄✨",
+                "Keep that big smile, Vinay would be proud of you!",
+                "Happiness looks amazing on you 💚"
+            ]
+        elif 0 < polarity <= 0.5:
+            mood = "Happy"
+            responses = [
+                "That’s great! Keep spreading positivity 🌼",
+                "Glad to hear you’re doing well!",
+                "Enjoy your good mood and share it 💫"
+            ]
+        elif -0.3 <= polarity <= 0:
+            mood = "Neutral"
+            responses = [
+                "Hmm, just another day, huh?",
+                "Sometimes peace is all we need ☁",
+                "Quiet days are important too 🌙"
+            ]
+        elif -0.6 < polarity < -0.3:
+            mood = "Sad"
+            responses = [
+                "It’s okay to not feel okay 💙",
+                "Take a deep breath. Tomorrow will be kinder 🌤",
+                "Hey, don’t be hard on yourself — you’re doing your best 🌱"
+            ]
+        else:
+            mood = "Angry"
+            responses = [
+                "Take it slow. Breathe in... and out 🌿",
+                "Let’s calm that fire — you’re stronger than you think 💪",
+                "It’s okay to feel angry. Let it out gently 🌸"
+            ]
+
+        st.subheader(f"Detected Mood: {mood}")
+        st.info(random.choice(responses))
