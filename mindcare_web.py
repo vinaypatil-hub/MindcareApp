@@ -1,57 +1,63 @@
 import streamlit as st
 from textblob import TextBlob
-import random
 
-st.set_page_config(page_title="MindCare by Vinay Patil 💚", page_icon="💚", layout="centered")
+# ---------------- APP TITLE ----------------
+st.set_page_config(page_title="MindCare", page_icon="💚", layout="centered")
 
-st.markdown("<h1 style='text-align:center; color:green;'>🧠 MindCare by Vinay Patil 💚</h1>", unsafe_allow_html=True)
-st.write("Welcome! Type how you feel below and let me respond to your mood 🌱")
+st.title("💚 MindCare")
+st.subheader("Your friendly mental wellness companion")
 
-user_input = st.text_area("How are you feeling today?")
+# ---------------- ASK NAME ----------------
+user_name = st.text_input("What's your name? 🙂", "")
 
-if st.button("Analyze Mood"):
-    if user_input.strip() == "":
-        st.warning("Please write something first 💬")
+if user_name:
+    st.write(f"Hi {user_name}! I'm glad you're here 💚")
+else:
+    st.write("Please tell me your name so I can chat with you personally 💬")
+
+st.write("Tell me how you're feeling today, and I’ll try to help you feel better 🌿")
+
+# ---------------- USER INPUT ----------------
+user_input = st.text_area("What's on your mind?")
+
+# ---------------- FUNCTION TO ANALYZE MOOD ----------------
+def analyze_mood(text):
+    if not text.strip():
+        return "neutral", "Please share something so I can understand how you feel."
+
+    blob = TextBlob(text)
+    sentiment = blob.sentiment.polarity
+
+    if sentiment > 0.5:
+        return "happy", "That’s awesome! Keep spreading positivity 😊"
+    elif sentiment > 0:
+        return "calm", "That sounds nice. Stay peaceful and keep going 🌿"
+    elif sentiment < -0.5:
+        return "sad", "I'm sorry to hear that. It’s okay to feel this way sometimes 💙"
+    elif sentiment < 0:
+        return "worried", "Try to relax — take a deep breath, you got this 🌼"
     else:
-        blob = TextBlob(user_input)
-        polarity = blob.sentiment.polarity
+        return "neutral", "Thanks for sharing. Let’s talk more if you’d like 💬"
 
-        # Determine mood based on polarity
-        if polarity > 0.5:
-            mood = "Very Happy"
-            responses = [
-                "Wow! You're shining today 😄✨",
-                "Keep that big smile, Vinay would be proud of you!",
-                "Happiness looks amazing on you 💚"
-            ]
-        elif 0 < polarity <= 0.5:
-            mood = "Happy"
-            responses = [
-                "That’s great! Keep spreading positivity 🌼",
-                "Glad to hear you’re doing well!",
-                "Enjoy your good mood and share it 💫"
-            ]
-        elif -0.3 <= polarity <= 0:
-            mood = "Neutral"
-            responses = [
-                "Hmm, just another day, huh?",
-                "Sometimes peace is all we need ☁",
-                "Quiet days are important too 🌙"
-            ]
-        elif -0.6 < polarity < -0.3:
-            mood = "Sad"
-            responses = [
-                "It’s okay to not feel okay 💙",
-                "Take a deep breath. Tomorrow will be kinder 🌤",
-                "Hey, don’t be hard on yourself — you’re doing your best 🌱"
-            ]
-        else:
-            mood = "Angry"
-            responses = [
-                "Take it slow. Breathe in... and out 🌿",
-                "Let’s calm that fire — you’re stronger than you think 💪",
-                "It’s okay to feel angry. Let it out gently 🌸"
-            ]
+# ---------------- SMART REPLY GENERATOR ----------------
+def smart_reply(mood, name):
+    replies = {
+        "happy": [f"That's great, {name}! What made your day so good?", f"Keep shining, {name}! 🌟"],
+        "calm": [f"That’s nice, {name}. Have you tried meditating lately?", "Peaceful moments are the best 🌿"],
+        "sad": [f"{name}, do you want to talk about what’s making you sad?", "Remember, you’re not alone 💙"],
+        "worried": [f"{name}, maybe try a small walk or listening to music 🎧", "Want me to suggest some stress-busters?"],
+        "neutral": [f"Hmm... {name}, maybe we can do something fun!", "How was your day overall?"]
+    }
+    return replies.get(mood, [f"I’m here for you, {name} ❤"])[0]
 
-        st.subheader(f"Detected Mood: {mood}")
-        st.info(random.choice(responses))
+# ---------------- ANALYZE AND REPLY ----------------
+if st.button("Analyze My Mood"):
+    if not user_name.strip():
+        st.warning("Please enter your name first 😊")
+    else:
+        mood, response = analyze_mood(user_input)
+        st.success(f"*Detected mood:* {mood.capitalize()}")
+        st.info(response)
+
+        st.write("💭 Smart reply suggestion:")
+        st.write(smart_reply(mood, user_name))
